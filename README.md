@@ -210,4 +210,4 @@ await fetch(`/api/todos/${todoId}`, {
 
 ## 📧 Contact
 
-Made with ❤️ by [Pratyoos Panta](https://github.com/pratyoos)
+Made with ❤️ by [Pratyoos](https://github.com/pratyoos)
