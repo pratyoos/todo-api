@@ -8,36 +8,45 @@ const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, username: user.username },
     ENV.JWT_SECRET,
-    { expiresIn: '' }
+    { expiresIn: '16d' }
   );
 };
 
 // user registeration controller
 export const registerUser = async (req, res) => {
+  console.log("Register endpoint hit");
+  console.log("Request Body:", req.body);
+
   const { username, password } = req.body;
 
   if (!username || !password) {
+    console.log("Missing username or password");
     return res.status(400).json({ message: 'Please provide username and password' });
   }
 
   try {
     const userExists = await User.findOne({ username });
+    console.log("Checking if user exists:", !!userExists);
 
     if (userExists) {
+      console.log("Username already taken");
       return res.status(400).json({ message: 'Username already taken' });
     }
 
     const user = await User.create({ username, password });
+    console.log("User created:", user);
+
+    const token = generateToken(user);
+    console.log("JWT Token:", token);
 
     res.status(201).json({
       id: user._id,
       username: user.username,
-      token: generateToken(user),
+      token,
     });
-  }
-  catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+  } catch (error) {
+    console.error("Registration Error:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
